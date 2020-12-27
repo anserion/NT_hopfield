@@ -27,13 +27,18 @@ type
 
   TForm1 = class(TForm)
     BTN_orig1_draw: TButton;
+    BTN_orig2_learn: TButton;
+    BTN_orig3_learn: TButton;
+    BTN_orig4_learn: TButton;
     BTN_orig2_draw: TButton;
     BTN_orig3_draw: TButton;
     BTN_orig4_draw: TButton;
     BTN_orig_create: TButton;
     BTN_step: TButton;
     BTN_S_reset: TButton;
-    BTN_learn: TButton;
+    BTN_W_reset: TButton;
+    BTN_orig1_learn: TButton;
+    BTN_neurons_out_forget: TButton;
     Edit_student_name: TEdit;
     GB_Layer1: TGroupBox;
     Label_neuron1: TLabel;
@@ -124,7 +129,9 @@ type
     PB_w_7: TPaintBox;
     PB_w_8: TPaintBox;
     PB_w_9: TPaintBox;
-    procedure BTN_learnClick(Sender: TObject);
+    procedure BTN_neurons_out_forgetClick(Sender: TObject);
+    procedure BTN_orig1_learnClick(Sender: TObject);
+    procedure BTN_W_resetClick(Sender: TObject);
     procedure BTN_stepClick(Sender: TObject);
     procedure BTN_orig1_drawClick(Sender: TObject);
     procedure BTN_orig_createClick(Sender: TObject);
@@ -226,6 +233,17 @@ begin
   PB_w_1Paint(PB_w_24);
   PB_w_1Paint(PB_w_25);
 
+  if BTN_orig1_learn.tag>0 then BTN_orig1_learn.caption:='Учить' else BTN_orig1_learn.Caption:='Забыть';
+  if BTN_orig2_learn.tag>0 then BTN_orig2_learn.caption:='Учить' else BTN_orig2_learn.Caption:='Забыть';
+  if BTN_orig3_learn.tag>0 then BTN_orig3_learn.caption:='Учить' else BTN_orig3_learn.Caption:='Забыть';
+  if BTN_orig4_learn.tag>0 then BTN_orig4_learn.caption:='Учить' else BTN_orig4_learn.Caption:='Забыть';
+
+  PB_orig1Paint(PB_orig1);
+  PB_orig1Paint(PB_orig2);
+  PB_orig1Paint(PB_orig3);
+  PB_orig1Paint(PB_orig4);
+
+  PB_receptorsPaint(PB_receptors);
   PB_neurons_outPaint(PB_neurons_out);
 end;
 
@@ -240,7 +258,7 @@ begin
     cell_x:=trunc(X/dx)+1;
     cell_y:=trunc(Y/dy)+1;
     if orig_elements[tag,cell_x,cell_y]=1
-    then orig_elements[tag,cell_x,cell_y]:=0
+    then orig_elements[tag,cell_x,cell_y]:=-1
     else orig_elements[tag,cell_x,cell_y]:=1;
     Redraw_orig_cell(Sender,cell_x,cell_y);
   end;
@@ -430,6 +448,10 @@ end;
 procedure TForm1.BTN_stepClick(Sender: TObject);
 var i,cell_x,cell_y,active_x,active_y:integer;
 begin
+  for cell_x:=1 to s_width do
+  for cell_y:=1 to s_height do
+    L1_out[cell_x,cell_y]:=S_elements[cell_x,cell_y];
+
   for i:=1 to 1000 do
   begin
     active_x:=random(s_width)+1;
@@ -446,8 +468,8 @@ begin
   Redraw_widgets;
 end;
 
-procedure TForm1.BTN_learnClick(Sender: TObject);
-var i,cell_x,cell_y,active_x,active_y:integer;
+procedure TForm1.BTN_W_resetClick(Sender: TObject);
+var cell_x,cell_y,active_x,active_y:integer;
 begin
   for active_x:=1 to s_width do
   for active_y:=1 to s_height do
@@ -455,18 +477,45 @@ begin
     for cell_y:=1 to s_height do
         L1_w[active_x,active_y,cell_x,cell_y]:=0;
 
-  for i:=1 to n_origs do
-  begin
-    for active_x:=1 to s_width do
-    for active_y:=1 to s_height do
-      for cell_x:=1 to s_width do
-      for cell_y:=1 to s_height do
-        if not((active_x=cell_x) and (active_y=cell_y)) then
-        L1_w[active_x,active_y,cell_x,cell_y]:=L1_w[active_x,active_y,cell_x,cell_y]+
-           Orig_elements[i,active_x,active_y]*Orig_elements[i,cell_x,cell_y];
-  end;
+  BTN_orig1_learn.tag:=abs(BTN_orig1_learn.tag);
+  BTN_orig2_learn.tag:=abs(BTN_orig2_learn.tag);
+  BTN_orig3_learn.tag:=abs(BTN_orig3_learn.tag);
+  BTN_orig4_learn.tag:=abs(BTN_orig4_learn.tag);
+  BTN_stepClick(self);
+end;
 
-  Redraw_widgets;
+procedure TForm1.BTN_orig1_learnClick(Sender: TObject);
+var cell_x,cell_y,active_x,active_y,active_orig:integer;
+begin
+  active_orig:=abs((Sender as TButton).tag);
+  for active_x:=1 to s_width do
+  for active_y:=1 to s_height do
+    for cell_x:=1 to s_width do
+    for cell_y:=1 to s_height do
+      if not((active_x=cell_x) and (active_y=cell_y)) then
+        if (Sender as TButton).tag>0 then
+        L1_w[active_x,active_y,cell_x,cell_y]:=L1_w[active_x,active_y,cell_x,cell_y]+
+           Orig_elements[active_orig,active_x,active_y]*Orig_elements[active_orig,cell_x,cell_y]
+        else
+        L1_w[active_x,active_y,cell_x,cell_y]:=L1_w[active_x,active_y,cell_x,cell_y]-
+           Orig_elements[active_orig,active_x,active_y]*Orig_elements[active_orig,cell_x,cell_y];
+
+  (Sender as TButton).tag:=-(Sender as TButton).tag;
+  BTN_stepClick(self);
+end;
+
+procedure TForm1.BTN_neurons_out_forgetClick(Sender: TObject);
+var cell_x,cell_y,active_x,active_y:integer;
+begin
+  for active_x:=1 to s_width do
+  for active_y:=1 to s_height do
+    for cell_x:=1 to s_width do
+    for cell_y:=1 to s_height do
+      if not((active_x=cell_x) and (active_y=cell_y)) then
+        L1_w[active_x,active_y,cell_x,cell_y]:=L1_w[active_x,active_y,cell_x,cell_y]-
+                             0.1*L1_out[active_x,active_y]*L1_out[cell_x,cell_y];
+
+  BTN_stepClick(self);
 end;
 
 procedure TForm1.BTN_orig1_drawClick(Sender: TObject);
@@ -477,12 +526,7 @@ begin
       with Sender as TButton do
         S_elements[cell_x,cell_y]:=Orig_elements[tag,cell_x,cell_y];
 
-  for cell_x:=1 to s_width do
-  for cell_y:=1 to s_height do
-    L1_out[cell_x,cell_y]:=S_elements[cell_x,cell_y];
-
   BTN_stepClick(self);
-  PB_receptorsPaint(PB_receptors);
 end;
 
 procedure TForm1.BTN_orig_createClick(Sender: TObject);
@@ -501,10 +545,12 @@ begin
       Orig_elements[i,rnd_x,rnd_y]:=1;
     end;
 
-  PB_orig1Paint(PB_orig1);
-  PB_orig1Paint(PB_orig2);
-  PB_orig1Paint(PB_orig3);
-  PB_orig1Paint(PB_orig4);
+  BTN_orig1_learn.tag:=abs(BTN_orig1_learn.tag);
+  BTN_orig2_learn.tag:=abs(BTN_orig2_learn.tag);
+  BTN_orig3_learn.tag:=abs(BTN_orig3_learn.tag);
+  BTN_orig4_learn.tag:=abs(BTN_orig4_learn.tag);
+  BTN_W_resetClick(self);
+  BTN_stepClick(self);
 end;
 
 procedure TForm1.BTN_S_resetClick(Sender: TObject);
@@ -512,12 +558,9 @@ var cell_x,cell_y:integer;
 begin
    for cell_x:=1 to s_width do
    for cell_y:=1 to s_height do
-      begin
-         S_elements[cell_x,cell_y]:=-1;
-         L1_out[cell_x,cell_y]:=-1
-      end;
+     S_elements[cell_x,cell_y]:=-1;
 
-   PB_receptorsPaint(self);
+   BTN_stepClick(self);
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);

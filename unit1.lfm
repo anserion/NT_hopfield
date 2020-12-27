@@ -721,24 +721,24 @@ object Form1: TForm1
     ParentFont = False
   end
   object BTN_orig_create: TButton
-    Left = 624
+    Left = 728
     Height = 32
     Top = 8
     Width = 160
     Caption = 'Создать эталоны'
-    Font.Height = -17
+    Font.Height = -16
     Font.Name = 'Sans'
     OnClick = BTN_orig_createClick
     ParentFont = False
     TabOrder = 1
   end
   object BTN_step: TButton
-    Left = 880
+    Left = 888
     Height = 32
     Top = 8
-    Width = 128
+    Width = 120
     Caption = '1000 Шагов'
-    Font.Height = -17
+    Font.Height = -16
     Font.Name = 'Sans'
     OnClick = BTN_stepClick
     ParentFont = False
@@ -777,7 +777,7 @@ object Form1: TForm1
     Left = 8
     Height = 40
     Top = 568
-    Width = 85
+    Width = 32
     Caption = 'в РП'
     OnClick = BTN_orig1_drawClick
     ParentFont = False
@@ -798,7 +798,7 @@ object Form1: TForm1
     Left = 96
     Height = 40
     Top = 568
-    Width = 85
+    Width = 32
     Caption = 'в РП'
     OnClick = BTN_orig1_drawClick
     ParentFont = False
@@ -819,7 +819,7 @@ object Form1: TForm1
     Left = 184
     Height = 40
     Top = 568
-    Width = 85
+    Width = 32
     Caption = 'в РП'
     OnClick = BTN_orig1_drawClick
     ParentFont = False
@@ -840,7 +840,7 @@ object Form1: TForm1
     Left = 272
     Height = 40
     Top = 568
-    Width = 85
+    Width = 32
     Caption = 'в РП'
     OnClick = BTN_orig1_drawClick
     ParentFont = False
@@ -894,8 +894,8 @@ object Form1: TForm1
     Left = 368
     Height = 14
     Top = 462
-    Width = 117
-    Caption = 'Выходы нейронов'
+    Width = 82
+    Caption = 'Выходы сети'
     ParentColor = False
     ParentFont = False
   end
@@ -910,16 +910,65 @@ object Form1: TForm1
     ParentFont = False
     TabOrder = 8
   end
-  object BTN_learn: TButton
-    Left = 784
+  object BTN_W_reset: TButton
+    Left = 624
     Height = 32
     Top = 8
-    Width = 96
-    Caption = 'Обучить'
-    Font.Height = -17
+    Width = 104
+    Caption = 'Сброс сети'
+    Font.Height = -16
     Font.Name = 'Sans'
-    OnClick = BTN_learnClick
+    OnClick = BTN_W_resetClick
     ParentFont = False
     TabOrder = 9
+  end
+  object BTN_orig1_learn: TButton
+    Tag = 1
+    Left = 40
+    Height = 40
+    Top = 568
+    Width = 51
+    Caption = 'Учить'
+    OnClick = BTN_orig1_learnClick
+    TabOrder = 10
+  end
+  object BTN_orig2_learn: TButton
+    Tag = 2
+    Left = 128
+    Height = 40
+    Top = 568
+    Width = 51
+    Caption = 'Учить'
+    OnClick = BTN_orig1_learnClick
+    TabOrder = 11
+  end
+  object BTN_orig3_learn: TButton
+    Tag = 3
+    Left = 216
+    Height = 40
+    Top = 568
+    Width = 51
+    Caption = 'Учить'
+    OnClick = BTN_orig1_learnClick
+    TabOrder = 12
+  end
+  object BTN_orig4_learn: TButton
+    Tag = 4
+    Left = 304
+    Height = 40
+    Top = 568
+    Width = 51
+    Caption = 'Учить'
+    OnClick = BTN_orig1_learnClick
+    TabOrder = 13
+  end
+  object BTN_neurons_out_forget: TButton
+    Left = 456
+    Height = 25
+    Top = 456
+    Width = 64
+    Caption = 'Забыть'
+    OnClick = BTN_neurons_out_forgetClick
+    TabOrder = 14
   end
 end
